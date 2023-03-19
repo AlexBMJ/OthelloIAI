@@ -22,7 +22,15 @@ public class SmortestAI implements IOthelloAI{
     }
 
     private Position ABSearch(GameState s){
-        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6).b;
+        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4).b;
+    }
+
+    private boolean isCorner(GameState s, Position p){
+        return (p.col == 0 || p.col == s.getBoard().length-1) && (p.row == 0 || p.row == s.getBoard()[0].length-1);
+    }
+
+    private boolean isEdge(GameState s, Position p){
+        return (p.col == 0 || p.col == s.getBoard().length-1) || (p.row == 0 || p.row == s.getBoard()[0].length-1);
     }
     
     private Integer utility(GameState s, boolean max){
@@ -37,7 +45,14 @@ public class SmortestAI implements IOthelloAI{
             return 0;
         }
 
-        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
+        for (var move : s.legalMoves()) {
+            if (isCorner(s, move))
+                return max ? 1000 : -1000;
+            if (isEdge(s, move))
+                return max ? 500 : -500;
+        }
+
+        if (placedTileCount > s.getBoard()[0].length * s.getBoard().length / 2)
             return max ? -util : util;
         return max ? util : -util;
     }
