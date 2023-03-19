@@ -3,14 +3,12 @@ import java.util.Random;
 
 /**
  * A simple OthelloAI-implementation. The method to decide the next move just
- * returns the first legal move that it finds. 
- * @author Mai Ajspur
- * @version 9.2.2018
+ * returns a random legal move that it finds. 
  */
 public class RandAI implements IOthelloAI{
     Random rand = new Random(); 
 	/**
-	 * Returns first legal move
+	 * Returns random legal move
 	 */
 	public Position decideMove(GameState s){
 		ArrayList<Position> moves = s.legalMoves();
