@@ -28,11 +28,15 @@ public class SmortestAI implements IOthelloAI{
     private Integer utility(GameState s, boolean max){
         int[] counts = s.countTokens();
         int util = counts[0]-counts[1];
-
-        if (s.isFinished())
-            return max ? -util : util;
-
         int placedTileCount = counts[0]+counts[1];
+
+        if (s.isFinished()) {
+            util = (max ? -util : util);
+            if (util > 0) return 1000 - placedTileCount;
+            if (util < 0) return -1000 + placedTileCount;
+            return 0;
+        }
+
         if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
             return max ? -util : util;
         return max ? util : -util;
