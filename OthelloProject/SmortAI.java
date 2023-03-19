@@ -22,13 +22,13 @@ public class SmortAI implements IOthelloAI{
     }
 
     private Position ABSearch(GameState s){
-        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6).b;
+        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4).b;
     }
     
     private Integer utility(GameState s, boolean max){
         int[] counts = s.countTokens();
-        int util = counts[0]-counts[1];
-        return max?-util:util;
+        int util = s.getPlayerInTurn()==1? counts[0]-counts[1]:counts[1]-counts[0];
+        return max?util:-util;
     }
 
     private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count){

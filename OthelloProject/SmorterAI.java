@@ -22,16 +22,17 @@ public class SmorterAI implements IOthelloAI{
     }
 
     private Position ABSearch(GameState s){
-        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6).b;
+        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4).b;
     }
     
     private Integer utility(GameState s, boolean max){
         int[] counts = s.countTokens();
-        int util = counts[0]-counts[1];
+        int util = s.getPlayerInTurn()==1? counts[0]-counts[1]:counts[1]-counts[0];
         int placedTileCount = counts[0]+counts[1];
+        util = (max ? util : -util);
         if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
-            return max ? -util : util;
-        return max ? util : -util;
+            return -util;
+        return util;
     }
 
     private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count){

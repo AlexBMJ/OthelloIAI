@@ -22,29 +22,30 @@ public class SmortestAI implements IOthelloAI{
     }
 
     private Position ABSearch(GameState s){
-        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6).b;
+        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4).b;
     }
     
-    private Integer utility(GameState s, boolean max){
+    private Integer utility(GameState s, boolean max, boolean fin){
         int[] counts = s.countTokens();
-        int util = counts[0]-counts[1];
+        int util = s.getPlayerInTurn()==1? counts[1]-counts[0]:counts[0]-counts[1];
         int placedTileCount = counts[0]+counts[1];
 
-        if (s.isFinished()) {
-            util = (max ? -util : util);
+        util = (max ? util : -util);
+        if (fin) {
             if (util > 0) return 1000 - placedTileCount;
             if (util < 0) return -1000 + placedTileCount;
             return 0;
         }
 
         if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
-            return max ? -util : util;
-        return max ? util : -util;
+            return -util;
+        return util;
     }
 
     private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count){
-        if (s.isFinished() || count <= 0) 
-            return new Pair<>(utility(s,true), null);
+        boolean fin = s.isFinished();
+        if (fin || count <= 0) 
+            return new Pair<>(utility(s,true, fin), null);
         int v = Integer.MIN_VALUE;
         Position move = null;
         var moves = s.legalMoves();
@@ -68,8 +69,9 @@ public class SmortestAI implements IOthelloAI{
     }
 
     private Pair<Integer,Position> minValue(GameState s, int alpha, int beta, int count){
-        if (s.isFinished() || count <= 0) 
-            return new Pair<>(utility(s,false), null);
+        boolean fin = s.isFinished();
+        if (fin || count <= 0) 
+            return new Pair<>(utility(s,false, fin), null);
         int v = Integer.MAX_VALUE;
         Position move = null;
         var moves = s.legalMoves();

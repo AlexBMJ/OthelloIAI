@@ -6,7 +6,16 @@ import java.util.Random;
  * returns a random legal move that it finds. 
  */
 public class RandAI implements IOthelloAI{
-    Random rand = new Random(); 
+    private Random rand;
+
+    public RandAI(){
+        rand = new Random();
+    }
+
+    public RandAI(int seed){
+        rand = new Random(seed);
+    }
+
 	/**
 	 * Returns random legal move
 	 */
