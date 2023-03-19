@@ -1,5 +1,5 @@
 import java.lang.Math;
-public class SmortAI implements IOthelloAI{
+public class SmorterAI implements IOthelloAI{
     private class Pair<A, B>{
         public A a;
         public B b;
@@ -28,7 +28,10 @@ public class SmortAI implements IOthelloAI{
     private Integer utility(GameState s, boolean max){
         int[] counts = s.countTokens();
         int util = counts[0]-counts[1];
-        return max?-util:util;
+        int placedTileCount = counts[0]+counts[1];
+        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
+            return max ? -util : util;
+        return max ? util : -util;
     }
 
     private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count){
