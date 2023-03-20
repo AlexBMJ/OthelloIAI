@@ -65,14 +65,38 @@ public class WeightedBoardAI implements IOthelloAI{
         {100, -20, -20, 100}
     };
 
-    private int getPostitionValue(GameState s, Position p){
-        switch (s.getBoard().length) {
-            case 10: return POS_VALUE_10[p.col][p.row];
-            case 8: return POS_VALUE_8[p.col][p.row];
-            case 6: return POS_VALUE_6[p.col][p.row];
-            case 4: return POS_VALUE_4[p.col][p.row];
+    private int getPostitionValues(GameState s, int me){
+        int[][] pv = null;
+        int[][] board = s.getBoard();
+        switch (board.length) {
+            case 10: 
+                pv = POS_VALUE_10;
+                break;
+            case 8: 
+                pv = POS_VALUE_8;
+                break;
+            case 6: 
+                pv = POS_VALUE_6;
+                break;
+            case 4: 
+                pv = POS_VALUE_4;
+                break;
+            default:
+                throw new IllegalArgumentException("Board size not supported");
         };
-        throw new IllegalArgumentException("Board size not supported");
+        int res = 0;
+        for(int i = 0; i < pv.length; i++){
+            for(int j = 0; j < pv[0].length; j++){
+                if (board[i][j] == me){
+                    res += pv[i][j];
+                } else if (board[i][j] == 3-me){
+                    res -= pv[i][j];
+                }
+            }
+        }
+        
+        return res;
+
     }
     
     private Integer utility(GameState s, int me, boolean fin){
@@ -87,15 +111,7 @@ public class WeightedBoardAI implements IOthelloAI{
             return 0;
         }
         var board = s.getBoard();
-        util = 0;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == me)
-                    util += getPostitionValue(s, new Position(i, j));
-                else if (board[i][j] == 3 - me)
-                    util -= getPostitionValue(s, new Position(i, j));
-            }
-        }
+        util = getPostitionValues(s,me);
         if (counts[me - 1] > s.getBoard()[0].length * (s.getBoard().length / 4))
             util -= 100;
         if (s.getPlayerInTurn() != me)
