@@ -1,5 +1,5 @@
 import java.lang.Math;
-public class SmortestAI implements IOthelloAI{
+public class AgressiveAI implements IOthelloAI{
     private class Pair<A, B>{
         public A a;
         public B b;
@@ -36,15 +36,13 @@ public class SmortestAI implements IOthelloAI{
             if (util < 0) return -1000 + placedTileCount;
             return 0;
         }
-        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
-            return -util;
         return util;
     }
 
     private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count, int me){
         boolean fin = s.isFinished();
         if (fin || count <= 0) 
-            return new Pair<>(utility(s,me, fin), null);
+            return new Pair<>(utility(s, me, fin), null);
         int v = Integer.MIN_VALUE;
         Position move = null;
         var moves = s.legalMoves();
@@ -67,10 +65,10 @@ public class SmortestAI implements IOthelloAI{
         return new Pair<Integer,Position>(v,move);
     }
 
-    private Pair<Integer,Position> minValue(GameState s, int alpha, int beta, int count, int me){
+    private Pair<Integer,Position> minValue(GameState s, int alpha, int beta, int count,int me){
         boolean fin = s.isFinished();
         if (fin || count <= 0) 
-            return new Pair<>(utility(s,me, fin), null);
+            return new Pair<>(utility(s, me, fin), null);
         int v = Integer.MAX_VALUE;
         Position move = null;
         var moves = s.legalMoves();

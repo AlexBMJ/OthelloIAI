@@ -22,22 +22,23 @@ public class SmorterAI implements IOthelloAI{
     }
 
     private Position ABSearch(GameState s){
-        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4).b;
+        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4, s.getPlayerInTurn()).b;
     }
     
-    private Integer utility(GameState s, boolean max){
+    private Integer utility(GameState s, int me){
         int[] counts = s.countTokens();
         int util = s.getPlayerInTurn()==1? counts[0]-counts[1]:counts[1]-counts[0];
         int placedTileCount = counts[0]+counts[1];
-        util = (max ? util : -util);
-        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
+        if (s.getPlayerInTurn() != me)
+            util = -util;
+        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 4))
             return -util;
         return util;
     }
 
-    private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count){
+    private Pair<Integer,Position> maxValue(GameState s, int alpha, int beta, int count, int me){
         if (s.isFinished() || count <= 0) 
-            return new Pair<>(utility(s,true), null);
+            return new Pair<>(utility(s,me), null);
         int v = Integer.MIN_VALUE;
         Position move = null;
         var moves = s.legalMoves();
@@ -46,7 +47,7 @@ public class SmorterAI implements IOthelloAI{
         for(Position a : moves){
             GameState sPrime = clone(s);
             sPrime.insertToken(a);
-            Pair<Integer, Position> min_choice = minValue(sPrime,alpha,beta, count-1);
+            Pair<Integer, Position> min_choice = minValue(sPrime,alpha,beta, count-1,me);
             int v2 = min_choice.a;
             Position a2 = min_choice.b;
             if (v2>v){
@@ -60,9 +61,9 @@ public class SmorterAI implements IOthelloAI{
         return new Pair<Integer,Position>(v,move);
     }
 
-    private Pair<Integer,Position> minValue(GameState s, int alpha, int beta, int count){
+    private Pair<Integer,Position> minValue(GameState s, int alpha, int beta, int count, int me){
         if (s.isFinished() || count <= 0) 
-            return new Pair<>(utility(s,false), null);
+            return new Pair<>(utility(s,me), null);
         int v = Integer.MAX_VALUE;
         Position move = null;
         var moves = s.legalMoves();
@@ -71,7 +72,7 @@ public class SmorterAI implements IOthelloAI{
         for(Position a : moves){
             GameState sPrime = clone(s);
             sPrime.insertToken(a);
-            Pair<Integer, Position> max_choice = maxValue(sPrime,alpha,beta, count-1);
+            Pair<Integer, Position> max_choice = maxValue(sPrime,alpha,beta, count-1,me);
             int v2 = max_choice.a;
             Position a2 = max_choice.b;
             if (v2<v){
