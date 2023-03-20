@@ -4,7 +4,7 @@ public class Test{
     public static void main(String[] args){
         int t = Integer.parseInt(args[0]);
         while (t-->0){
-            IOthelloAI[] AIs = new IOthelloAI[]{new DumAI(), new SmortAI(), new SmorterAI(), new SmortestAI(), new AgressiveAI()};
+            IOthelloAI[] AIs = new IOthelloAI[]{new DumAI(), new SmortAI(), new SmorterAI(), new SmortestAI(), new AgressiveAI(), new LoserAI()};
             IOthelloAI[] RandAIs = new IOthelloAI[25];
             Random rand = new Random();
             for (int i = 0; i < RandAIs.length; i++) {
