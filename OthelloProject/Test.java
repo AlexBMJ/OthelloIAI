@@ -3,7 +3,7 @@ import java.util.Random;
 public class Test{
     public static void main(String[] args){
         int t = args.length > 0 ? Integer.parseInt(args[0]) : 25;
-        IOthelloAI[] AIs = new IOthelloAI[]{new DumAI(), new SmortAI(), new SmorterAI(), new SmortestAI(), new AgressiveAI(), new LoserAI()};
+        IOthelloAI[] AIs = new IOthelloAI[]{new DumAI(), new SmortAI(), new SmorterAI(), new SmortestAI(), new AgressiveAI(), new LoserAI(), new WeightedBoardAI()};
         IOthelloAI[] RandAIs = new IOthelloAI[t];
         Random rand = new Random();
         for (int i = 0; i < RandAIs.length; i++) {
