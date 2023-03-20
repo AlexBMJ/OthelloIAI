@@ -96,10 +96,10 @@ public class WeightedBoardAI implements IOthelloAI{
                     util -= getPostitionValue(s, new Position(i, j));
             }
         }
+        if (counts[me - 1] > s.getBoard()[0].length * (s.getBoard().length / 4))
+            util -= 100;
         if (s.getPlayerInTurn() != me)
             util = -util;
-        // if (placedTileCount < s.getBoard()[0].length * (s.getBoard().length / 2))
-        //     return -util;
         return util;
     }
 
