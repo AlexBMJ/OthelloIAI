@@ -25,6 +25,103 @@ public class WeightedBoardAI implements IOthelloAI{
         return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4, s.getPlayerInTurn()).b;
     }
 
+    private int[][] generatePosValue(int size){
+        int[][] posValue = new int[size][size];
+
+        posValue[0][0] = 100;
+        posValue[0][1] = -20;
+        posValue[1][0] = -20;
+        posValue[1][1] = -50;
+
+        posValue[0][size-1] = 100;
+        posValue[0][size-2] = -20;
+        posValue[1][size-1] = -20;
+        posValue[1][size-2] = -50;
+
+        posValue[size-1][0] = 100;
+        posValue[size-1][1] = -20;
+        posValue[size-2][0] = -20;
+        posValue[size-2][1] = -50;
+
+        posValue[size-1][size-1] = 100;
+        posValue[size-1][size-2] = -20;
+        posValue[size-2][size-1] = -20;
+        posValue[size-2][size-2] = -50;
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[0][i] = 10 / (i - 1);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[i][0] = 10 / (i - 1);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[size-1][i] = 10 / (i - 1);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[i][size-1] = 10 / (i - 1);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[0][i] = 10 / (size - i - 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[i][0] = 10 / (size - i - 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[size-1][i] = 10 / (size - i - 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[i][size-1] = 10 / (size - i - 2);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[1][i] = -2 / (i - 1 - i % 2);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[i][1] = -2 / (i - 1 - i % 2);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[size-2][i] = -2 / (i - 1 - i % 2);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[i][size-2] = -2 / (i - 1 - i % 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[1][i] = -2 / (size - i - 2 - (i - 1) % 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[i][1] = -2 / (size - i - 2 - (i - 1) % 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[size-2][i] = -2 / (size - i - 2 - (i - 1) % 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[i][size-2] = -2 / (size - i - 2 - (i - 1) % 2);
+        }
+
+        for (int i = 2; i < size - 2; i++){
+            for (int j = 2; j < size - 2; j++){
+                posValue[i][j] = 1;
+            }
+        }
+
+
+        return posValue;
+    }
+
     private final int[][] POS_VALUE_10 = {
         {100, -20, 10, 5, 2, 2, 5, 10, -20, 100},
         {-20, -50, -2, -2, -1, -1, -2, -2, -50, -20},
@@ -66,13 +163,24 @@ public class WeightedBoardAI implements IOthelloAI{
     };
 
     private int getPostitionValue(GameState s, Position p){
-        switch (s.getBoard().length) {
-            case 10: return POS_VALUE_10[p.col][p.row];
-            case 8: return POS_VALUE_8[p.col][p.row];
-            case 6: return POS_VALUE_6[p.col][p.row];
-            case 4: return POS_VALUE_4[p.col][p.row];
-        };
-        throw new IllegalArgumentException("Board size not supported");
+        return generatePosValue(s.getBoard().length)[p.col][p.row];
+
+        // for (int i = 0; i < weightedBoard.length; i++){
+        //     for (int j = 0; j < weightedBoard[i].length; j++){
+        //         System.out.print(weightedBoard[i][j] + " ");
+        //     }
+        //     System.out.println();
+        // }
+
+        // System.exit(0);
+
+        // switch (s.getBoard().length) {
+        //     case 10: return POS_VALUE_10[p.col][p.row];
+        //     case 8: return POS_VALUE_8[p.col][p.row];
+        //     case 6: return POS_VALUE_6[p.col][p.row];
+        //     case 4: return POS_VALUE_4[p.col][p.row];
+        // };
+        // throw new IllegalArgumentException("Board size not supported");
     }
     
     private Integer utility(GameState s, int me, boolean fin){
