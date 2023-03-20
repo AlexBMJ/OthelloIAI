@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 public class Test{
     public static void main(String[] args){
@@ -10,15 +11,14 @@ public class Test{
             RandAIs[i] = new RandAI(rand.nextInt());
         }
         boolean debug = false;
-        IOthelloAI player;
         ArrayList<Integer> w1 = new ArrayList<>();
         ArrayList<Integer> t1 = new ArrayList<>();
         ArrayList<Integer> l1 = new ArrayList<>();
-        for (IOthelloAI player1 : AIs){
-            int totalw = 0;
-            int totalt = 0;
-            int totall = 0;
-            for (IOthelloAI player2 : RandAIs){
+        Arrays.asList(AIs).parallelStream().forEach(player1 -> {
+            ArrayList<Integer> totalw = new ArrayList();
+            ArrayList<Integer> totalt = new ArrayList();
+            ArrayList<Integer> totall = new ArrayList();
+            Arrays.asList(RandAIs).parallelStream().forEach(player2 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
                 for (int size = 4; size <= 10; size+=2){
@@ -28,6 +28,7 @@ public class Test{
                         System.out.print(": Player1 to start => ");
                     }
                     GameState game = new GameState(size, 1);
+                    IOthelloAI player;
                     while (!game.isFinished()){
                         if (game.getPlayerInTurn()==1)
                             player = player1;
@@ -43,11 +44,11 @@ public class Test{
 
                     int x = counts[0]-counts[1];
                     if (x>0){
-                        totalw++;
+                        totalw.add(1);
                     }else if (x<0){
-                        totall++;
+                        totall.add(1);
                     } else {
-                        totalt++;
+                        totalt.add(1);
                     }
                     if (debug){
                         if (x>0){
@@ -59,23 +60,23 @@ public class Test{
                         }
                     }
                 }
-            }
+            });
             if (debug){
-                System.out.println("\tPlayer1 w: "+ totalw + " t: " + totalt + " l: " + totall);
+                System.out.println("\tPlayer1 w: "+ totalw.size() + " t: " + totalt.size() + " l: " + totall.size());
                 System.out.println();
             }
-            w1.add(totalw);
-            t1.add(totalt);
-            l1.add(totall);
-        }
+            w1.add(totalw.size());
+            t1.add(totalt.size());
+            l1.add(totall.size());
+        });
         ArrayList<Integer> w2 = new ArrayList<>();
         ArrayList<Integer> t2 = new ArrayList<>();
         ArrayList<Integer> l2 = new ArrayList<>();
-        for (IOthelloAI player2 : AIs){
-            int totalw = 0;
-            int totalt = 0;
-            int totall = 0;
-            for (IOthelloAI player1 : RandAIs){
+        Arrays.asList(AIs).parallelStream().forEach(player2 -> {
+            ArrayList<Integer> totalw = new ArrayList();
+            ArrayList<Integer> totalt = new ArrayList();
+            ArrayList<Integer> totall = new ArrayList();
+            Arrays.asList(RandAIs).parallelStream().forEach(player1 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
                 for (int size = 4; size <= 10; size+=2){
@@ -85,6 +86,7 @@ public class Test{
                         System.out.print(": Player1 to start => ");
                     }
                     GameState game = new GameState(size, 1);
+                    IOthelloAI player;
                     while (!game.isFinished()){
                         if (game.getPlayerInTurn()==1)
                             player = player1;
@@ -100,11 +102,11 @@ public class Test{
 
                     int x = counts[0]-counts[1];
                     if (x>0){
-                        totall++;
+                        totall.add(1);
                     }else if (x<0){
-                        totalw++;
+                        totalw.add(1);
                     } else {
-                        totalt++;
+                        totalt.add(1);
                     }
                     if (debug){
                         if (x>0){
@@ -116,15 +118,15 @@ public class Test{
                         }
                     }
                 }
-            }
+            });
             if (debug){
-                System.out.println("\tPlayer1 w: "+ totalw + " t: " + totalt + " l: " + totall);
+                System.out.println("\tPlayer1 w: "+ totalw.size() + " t: " + totalt.size() + " l: " + totall.size());
                 System.out.println();
             }
-            w2.add(totalw);
-            t2.add(totalt);
-            l2.add(totall);
-        }
+            w2.add(totalw.size());
+            t2.add(totalt.size());
+            l2.add(totall.size());
+        });
         t*=4;
         System.out.println("When first to move:");
         for(int i = 0; i<AIs.length; i++){
