@@ -31,7 +31,7 @@ public class SmorterAI implements IOthelloAI{
         int placedTileCount = counts[0]+counts[1];
         if (s.getPlayerInTurn() != me)
             util = -util;
-        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 4))
+        if (placedTileCount < s.getBoard()[0].length * (s.getBoard().length / 4))
             return -util;
         return util;
     }

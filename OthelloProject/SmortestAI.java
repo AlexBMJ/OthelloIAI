@@ -36,7 +36,7 @@ public class SmortestAI implements IOthelloAI{
             if (util < 0) return -1000 + placedTileCount;
             return 0;
         }
-        if (placedTileCount > s.getBoard()[0].length * (s.getBoard().length / 2))
+        if (placedTileCount < s.getBoard()[0].length * (s.getBoard().length / 2))
             return -util;
         return util;
     }
