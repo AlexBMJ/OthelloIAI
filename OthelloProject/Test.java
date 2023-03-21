@@ -14,7 +14,7 @@ public class Test{
         ArrayList<Integer> w1 = new ArrayList<>();
         ArrayList<Integer> t1 = new ArrayList<>();
         ArrayList<Integer> l1 = new ArrayList<>();
-        Arrays.asList(AIs).parallelStream().forEach(player1 -> {
+        Arrays.asList(AIs).stream().forEach(player1 -> {
             ArrayList<Integer> totalw = new ArrayList();
             ArrayList<Integer> totalt = new ArrayList();
             ArrayList<Integer> totall = new ArrayList();
@@ -72,7 +72,7 @@ public class Test{
         ArrayList<Integer> w2 = new ArrayList<>();
         ArrayList<Integer> t2 = new ArrayList<>();
         ArrayList<Integer> l2 = new ArrayList<>();
-        Arrays.asList(AIs).parallelStream().forEach(player2 -> {
+        Arrays.asList(AIs).stream().forEach(player2 -> {
             ArrayList<Integer> totalw = new ArrayList();
             ArrayList<Integer> totalt = new ArrayList();
             ArrayList<Integer> totall = new ArrayList();
