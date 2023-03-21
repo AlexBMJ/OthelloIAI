@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 public class Test{
     public static void main(String[] args){
         int t = args.length > 0 ? Integer.parseInt(args[0]) : 25;
@@ -15,13 +16,13 @@ public class Test{
         ArrayList<Integer> t1 = new ArrayList<>();
         ArrayList<Integer> l1 = new ArrayList<>();
         Arrays.asList(AIs).stream().forEach(player1 -> {
-            ArrayList<Integer> totalw = new ArrayList();
-            ArrayList<Integer> totalt = new ArrayList();
-            ArrayList<Integer> totall = new ArrayList();
+            AtomicInteger totalw = new AtomicInteger(0);
+            AtomicInteger totalt = new AtomicInteger(0);
+            AtomicInteger totall = new AtomicInteger(0);
             Arrays.asList(RandAIs).parallelStream().forEach(player2 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
-                for (int size = 4; size <= 10; size+=2){
+                for (int size = 4; size <= 8; size+=2){
 
                     if (debug){
                         System.out.print("\t" +size + "x" + size);
@@ -44,11 +45,11 @@ public class Test{
 
                     int x = counts[0]-counts[1];
                     if (x>0){
-                        totalw.add(1);
+                        totalw.updateAndGet(n->n+1);
                     }else if (x<0){
-                        totall.add(1);
+                        totall.updateAndGet(n->n+1);
                     } else {
-                        totalt.add(1);
+                        totalt.updateAndGet(n->n+1);
                     }
                     if (debug){
                         if (x>0){
@@ -62,24 +63,24 @@ public class Test{
                 }
             });
             if (debug){
-                System.out.println("\tPlayer1 w: "+ totalw.size() + " t: " + totalt.size() + " l: " + totall.size());
+                System.out.println("\tPlayer1 w: "+ totalw.get() + " t: " + totalt.get() + " l: " + totall.get());
                 System.out.println();
             }
-            w1.add(totalw.size());
-            t1.add(totalt.size());
-            l1.add(totall.size());
+            w1.add(totalw.get());
+            t1.add(totalt.get());
+            l1.add(totall.get());
         });
         ArrayList<Integer> w2 = new ArrayList<>();
         ArrayList<Integer> t2 = new ArrayList<>();
         ArrayList<Integer> l2 = new ArrayList<>();
         Arrays.asList(AIs).stream().forEach(player2 -> {
-            ArrayList<Integer> totalw = new ArrayList();
-            ArrayList<Integer> totalt = new ArrayList();
-            ArrayList<Integer> totall = new ArrayList();
+            AtomicInteger totalw = new AtomicInteger(0);
+            AtomicInteger totalt = new AtomicInteger(0);
+            AtomicInteger totall = new AtomicInteger(0);
             Arrays.asList(RandAIs).parallelStream().forEach(player1 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
-                for (int size = 4; size <= 10; size+=2){
+                for (int size = 4; size <= 8; size+=2){
 
                     if (debug){
                         System.out.print("\t" +size + "x" + size);
@@ -102,11 +103,11 @@ public class Test{
 
                     int x = counts[0]-counts[1];
                     if (x>0){
-                        totall.add(1);
+                        totall.updateAndGet(n->n+1);
                     }else if (x<0){
-                        totalw.add(1);
+                        totalw.updateAndGet(n->n+1);
                     } else {
-                        totalt.add(1);
+                        totalt.updateAndGet(n->n+1);
                     }
                     if (debug){
                         if (x>0){
@@ -120,21 +121,21 @@ public class Test{
                 }
             });
             if (debug){
-                System.out.println("\tPlayer1 w: "+ totalw.size() + " t: " + totalt.size() + " l: " + totall.size());
+                System.out.println("\tPlayer1 w: "+ totalw.get() + " t: " + totalt.get() + " l: " + totall.get());
                 System.out.println();
             }
-            w2.add(totalw.size());
-            t2.add(totalt.size());
-            l2.add(totall.size());
+            w2.add(totalw.get());
+            t2.add(totalt.get());
+            l2.add(totall.get());
         });
-        t*=4;
+        //t*=4;
         System.out.println("When first to move:");
         for(int i = 0; i<AIs.length; i++){
-            System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (int)(w1.get(i)/(float)t*100) + " t%: "+ (int)(t1.get(i)/(float)t*100) + " l%: "+ (int)(l1.get(i)/(float)t*100));
+            System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (w1.get(i)/(float)t*100) + " t%: "+ (t1.get(i)/(float)t*100) + " l%: "+ (l1.get(i)/(float)t*100));
         }
         System.out.println("When second to move:");
         for(int i = 0; i<AIs.length; i++){
-            System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (int)(w2.get(i)/(float)t*100) + " t%: "+ (int)(t2.get(i)/(float)t*100) + " l%: "+ (int)(l2.get(i)/(float)t*100));
+            System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (w2.get(i)/(float)t*100) + " t%: "+ (t2.get(i)/(float)t*100) + " l%: "+ (l2.get(i)/(float)t*100));
         }
     }
 }
