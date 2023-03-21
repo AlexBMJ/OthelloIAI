@@ -14,6 +14,15 @@ public class WeightedBoardAI implements IOthelloAI{
     }
 
     public Position decideMove(GameState s){
+        int size = s.getBoard().length;
+        pv_plus = generatePosValue(size);
+        pv_minus = new int[size][size];
+        zeroes = new int[size][size];
+        for (int i = 0; i<size; i++){
+            for (int j = 0; j<size; j++){
+                pv_minus[i][j] = -pv_plus[i][j];
+            }
+        }
         if ( !s.legalMoves().isEmpty() )
             return ABSearch(clone(s));
 		else
@@ -22,7 +31,7 @@ public class WeightedBoardAI implements IOthelloAI{
     }
 
     private Position ABSearch(GameState s){
-        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 4, s.getPlayerInTurn()).b;
+        return maxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6, s.getPlayerInTurn()).b;
     }
 
     private int[][] generatePosValue(int size){
@@ -161,19 +170,22 @@ public class WeightedBoardAI implements IOthelloAI{
         {-20, -50, -50, -20},
         {100, -20, -20, 100}
     };
+    private int[][] pv_plus;
+    private int[][] pv_minus;
+    private int[][] zeroes;
 
     private int getPostitionValues(GameState s, int me){
-        int[][] pv = generatePosValue(s.getBoard().length);
+        int[][][] pv = new int[3][][];
+        pv[0] = zeroes;
+        pv[me] = pv_plus;
+        pv[3-me] = pv_minus;
         int[][] board = s.getBoard();
 
         int res = 0;
-        for(int i = 0; i < pv.length; i++){
-            for(int j = 0; j < pv[0].length; j++){
-                if (board[i][j] == me){
-                    res += pv[i][j];
-                } else if (board[i][j] == 3-me){
-                    res -= pv[i][j];
-                }
+        int size = board.length;
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                res += pv[board[i][j]][i][j];
             }
         }
         
