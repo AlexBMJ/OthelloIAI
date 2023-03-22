@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Test{
     public static void main(String[] args){
         int t = args.length > 0 ? Integer.parseInt(args[0]) : 25;
-        IOthelloAI[] AIs = new IOthelloAI[]{new DumAI(), new SmortAI(), new SmorterAI(), new SmortestAI(), new AgressiveAI(), new LoserAI(), new WeightedBoardAI()};
+        IOthelloAI[] AIs = new IOthelloAI[]{new WeightedBoardAI()};//new DumAI(), new SmortAI(), new SmorterAI(), new SmortestAI(), new AgressiveAI(), new LoserAI(), new WeightedBoardAI()};
         IOthelloAI[] RandAIs = new IOthelloAI[t];
         Random rand = new Random();
         for (int i = 0; i < RandAIs.length; i++) {
@@ -19,10 +19,10 @@ public class Test{
             AtomicInteger totalw = new AtomicInteger(0);
             AtomicInteger totalt = new AtomicInteger(0);
             AtomicInteger totall = new AtomicInteger(0);
-            Arrays.asList(RandAIs).stream().forEach(player2 -> {
+            Arrays.asList(RandAIs).parallelStream().forEach(player2 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
-                for (int size = 4; size <= 8; size+=2){
+                for (int size = 8; size <= 8; size+=2){
 
                     if (debug){
                         System.out.print("\t" +size + "x" + size);
@@ -77,10 +77,10 @@ public class Test{
             AtomicInteger totalw = new AtomicInteger(0);
             AtomicInteger totalt = new AtomicInteger(0);
             AtomicInteger totall = new AtomicInteger(0);
-            Arrays.asList(RandAIs).stream().forEach(player1 -> {
+            Arrays.asList(RandAIs).parallelStream().forEach(player1 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
-                for (int size = 4; size <= 8; size+=2){
+                for (int size = 8; size <= 8; size+=2){
 
                     if (debug){
                         System.out.print("\t" +size + "x" + size);
@@ -128,7 +128,7 @@ public class Test{
             t2.add(totalt.get());
             l2.add(totall.get());
         });
-        t*=3;
+        t*=1;
         System.out.println("When first to move:");
         for(int i = 0; i<AIs.length; i++){
             System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (w1.get(i)/(float)t*100) + " t%: "+ (t1.get(i)/(float)t*100) + " l%: "+ (l1.get(i)/(float)t*100));

@@ -184,7 +184,7 @@ public class WeightedBoardAI implements IOthelloAI{
         if (moves.isEmpty())
             moves.add(new Position(-1, -1));
         int[] vs = new int[moves.size()];
-        IntStream.range(0, moves.size()).parallel().forEach(i->{
+        IntStream.range(0, moves.size()).forEach(i->{
             Position a = moves.get(i);
             GameState sPrime = clone(s);
             sPrime.insertToken(a);
