@@ -19,7 +19,7 @@ public class Test{
             AtomicInteger totalw = new AtomicInteger(0);
             AtomicInteger totalt = new AtomicInteger(0);
             AtomicInteger totall = new AtomicInteger(0);
-            Arrays.asList(RandAIs).parallelStream().forEach(player2 -> {
+            Arrays.asList(RandAIs).stream().forEach(player2 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
                 for (int size = 4; size <= 8; size+=2){
@@ -77,7 +77,7 @@ public class Test{
             AtomicInteger totalw = new AtomicInteger(0);
             AtomicInteger totalt = new AtomicInteger(0);
             AtomicInteger totall = new AtomicInteger(0);
-            Arrays.asList(RandAIs).parallelStream().forEach(player1 -> {
+            Arrays.asList(RandAIs).stream().forEach(player1 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
                 for (int size = 4; size <= 8; size+=2){
