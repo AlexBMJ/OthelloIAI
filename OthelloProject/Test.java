@@ -128,7 +128,7 @@ public class Test{
             t2.add(totalt.get());
             l2.add(totall.get());
         });
-        t*=4;
+        t*=3;
         System.out.println("When first to move:");
         for(int i = 0; i<AIs.length; i++){
             System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (w1.get(i)/(float)t*100) + " t%: "+ (t1.get(i)/(float)t*100) + " l%: "+ (l1.get(i)/(float)t*100));
