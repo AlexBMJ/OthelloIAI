@@ -5,6 +5,8 @@ public class WeightedBoardAI implements IOthelloAI{
         return new GameState(s.getBoard(), s.getPlayerInTurn());
     }
 
+    private int[] weights = {100, 15, 1, -5, -25, -40};
+
     public Position decideMove(GameState s){
         int size = s.getBoard().length;
         pv_plus = generatePosValue(size);
@@ -29,139 +31,106 @@ public class WeightedBoardAI implements IOthelloAI{
     private int[][] generatePosValue(int size){
         int[][] posValue = new int[size][size];
 
-        posValue[0][0] = 100;
-        posValue[0][1] = -20;
-        posValue[1][0] = -20;
-        posValue[1][1] = -50;
+        posValue[0][0] = weights[0];
+        posValue[0][1] = weights[4];
+        posValue[1][0] = weights[4];
+        posValue[1][1] = weights[5];
 
-        posValue[0][size-1] = 100;
-        posValue[0][size-2] = -20;
-        posValue[1][size-1] = -20;
-        posValue[1][size-2] = -50;
+        posValue[0][size-1] = weights[0];
+        posValue[0][size-2] = weights[4];
+        posValue[1][size-1] = weights[4];
+        posValue[1][size-2] = weights[5];
 
-        posValue[size-1][0] = 100;
-        posValue[size-1][1] = -20;
-        posValue[size-2][0] = -20;
-        posValue[size-2][1] = -50;
+        posValue[size-1][0] = weights[0];
+        posValue[size-1][1] = weights[4];
+        posValue[size-2][0] = weights[4];
+        posValue[size-2][1] = weights[5];
 
-        posValue[size-1][size-1] = 100;
-        posValue[size-1][size-2] = -20;
-        posValue[size-2][size-1] = -20;
-        posValue[size-2][size-2] = -50;
-
-        for (int i = 2; i < size / 2; i++){
-            posValue[0][i] = 10 / (i - 1);
-        }
+        posValue[size-1][size-1] = weights[0];
+        posValue[size-1][size-2] = weights[4];
+        posValue[size-2][size-1] = weights[4];
+        posValue[size-2][size-2] = weights[5];
 
         for (int i = 2; i < size / 2; i++){
-            posValue[i][0] = 10 / (i - 1);
+            posValue[0][i] = weights[1] / (i - 1);
         }
 
         for (int i = 2; i < size / 2; i++){
-            posValue[size-1][i] = 10 / (i - 1);
+            posValue[i][0] = weights[1] / (i - 1);
         }
 
         for (int i = 2; i < size / 2; i++){
-            posValue[i][size-1] = 10 / (i - 1);
-        }
-
-        for (int i = size - 3; i >= size / 2; i--){
-            posValue[0][i] = 10 / (size - i - 2);
-        }
-
-        for (int i = size - 3; i >= size / 2; i--){
-            posValue[i][0] = 10 / (size - i - 2);
-        }
-
-        for (int i = size - 3; i >= size / 2; i--){
-            posValue[size-1][i] = 10 / (size - i - 2);
-        }
-
-        for (int i = size - 3; i >= size / 2; i--){
-            posValue[i][size-1] = 10 / (size - i - 2);
+            posValue[size-1][i] = weights[1] / (i - 1);
         }
 
         for (int i = 2; i < size / 2; i++){
-            posValue[1][i] = -2 / (i - 1 - i % 2);
+            posValue[i][size-1] = weights[1] / (i - 1);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[0][i] = weights[1] / (size - i - 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[i][0] = weights[1] / (size - i - 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[size-1][i] = weights[1] / (size - i - 2);
+        }
+
+        for (int i = size - 3; i >= size / 2; i--){
+            posValue[i][size-1] = weights[1] / (size - i - 2);
         }
 
         for (int i = 2; i < size / 2; i++){
-            posValue[i][1] = -2 / (i - 1 - i % 2);
+            posValue[1][i] = weights[3] / (i - 1 - i % 2);
         }
 
         for (int i = 2; i < size / 2; i++){
-            posValue[size-2][i] = -2 / (i - 1 - i % 2);
+            posValue[i][1] = weights[3] / (i - 1 - i % 2);
         }
 
         for (int i = 2; i < size / 2; i++){
-            posValue[i][size-2] = -2 / (i - 1 - i % 2);
+            posValue[size-2][i] = weights[3] / (i - 1 - i % 2);
+        }
+
+        for (int i = 2; i < size / 2; i++){
+            posValue[i][size-2] = weights[3] / (i - 1 - i % 2);
         }
 
         for (int i = size - 3; i >= size / 2; i--){
-            posValue[1][i] = -2 / (size - i - 2 - (i - 1) % 2);
+            posValue[1][i] = weights[3] / (size - i - 2 - (i - 1) % 2);
         }
 
         for (int i = size - 3; i >= size / 2; i--){
-            posValue[i][1] = -2 / (size - i - 2 - (i - 1) % 2);
+            posValue[i][1] = weights[3] / (size - i - 2 - (i - 1) % 2);
         }
 
         for (int i = size - 3; i >= size / 2; i--){
-            posValue[size-2][i] = -2 / (size - i - 2 - (i - 1) % 2);
+            posValue[size-2][i] = weights[3] / (size - i - 2 - (i - 1) % 2);
         }
 
         for (int i = size - 3; i >= size / 2; i--){
-            posValue[i][size-2] = -2 / (size - i - 2 - (i - 1) % 2);
+            posValue[i][size-2] = weights[3] / (size - i - 2 - (i - 1) % 2);
         }
 
         for (int i = 2; i < size - 2; i++){
             for (int j = 2; j < size - 2; j++){
-                posValue[i][j] = 1;
+                posValue[i][j] = weights[2];
             }
         }
 
-
+        // System.out.println("Position values:");
+        // for (int i = 0; i < size; i++){
+        //     for (int j = 0; j < size; j++){
+        //         System.out.printf("%03d ", posValue[i][j]);
+        //     }
+        //     System.out.println();
+        // }
         return posValue;
     }
 
-    private final int[][] POS_VALUE_10 = {
-        {100, -20, 10, 5, 2, 2, 5, 10, -20, 100},
-        {-20, -50, -2, -2, -1, -1, -2, -2, -50, -20},
-        {10, -2, 1, 1, 1, 1, 1, 1, -2, 10},
-        {5, -2, 1, 1, 1, 1, 1, 1, -2, 5},
-        {2, -1, 1, 1, 0, 0, 1, 1, -1, 2},
-        {2, -1, 1, 1, 0, 0, 1, 1, -1, 2},
-        {5, -2, 1, 1, 1, 1, 1, 1, -2, 5},
-        {10, -2, 1, 1, 1, 1, 1, 1, -2, 10},
-        {-20, -50, -2, -2, -1, -1, -2, -2, -50, -20},
-        {100, -20, 10, 5, 2, 2, 5, 10, -20, 100}
-    };
-
-    private final int[][] POS_VALUE_8 = {
-        {100, -20, 10, 5, 5, 10, -20, 100},
-        {-20, -50, -2, -2, -2, -2, -50, -20},
-        {10, -2, 1, 1, 1, 1, -2, 10},
-        {5, -2, 1, 1, 1, 1, -2, 5},
-        {5, -2, 1, 1, 1, 1, -2, 5},
-        {10, -2, 1, 1, 1, 1, -2, 10},
-        {-20, -50, -2, -2, -2, -2, -50, -20},
-        {100, -20, 10, 5, 5, 10, -20, 100}
-    };
-
-    private final int[][] POS_VALUE_6 = {
-        {100, -20, 10, 5, -20, 100},
-        {-20, -50, -2, -2, -50, -20},
-        {10, -2, 1, 1, -2, 10},
-        {5, -2, 1, 1, -2, 5},
-        {-20, -50, -2, -2, -50, -20},
-        {100, -20, 10, 5, -20, 100}
-    };
-
-    private final int[][] POS_VALUE_4 = {
-        {100, -20, -20, 100},
-        {-20, -50, -50, -20},
-        {-20, -50, -50, -20},
-        {100, -20, -20, 100}
-    };
     private int[][] pv_plus;
     private int[][] pv_minus;
     private int[][] zeroes;
