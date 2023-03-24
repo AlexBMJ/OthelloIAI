@@ -222,7 +222,7 @@ public class WeightedBoardAI implements IOthelloAI{
             int v2 = maxValue(sPrime,alpha,beta, count-1, me);
             if (v2<v){
                v = v2;
-               alpha = Math.min(alpha, v);
+               beta = Math.min(beta, v);
             }
             if (v <= alpha) 
                 return v;
