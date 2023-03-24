@@ -3,4 +3,8 @@
 *.log
 *.fls
 *.synctex.gz
+*.dvi
+*.xdv
+*.pyg
+*.synctex
 _minted-report
