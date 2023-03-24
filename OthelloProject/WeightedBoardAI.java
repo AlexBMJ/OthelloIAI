@@ -168,20 +168,21 @@ public class WeightedBoardAI implements IOthelloAI{
     // Version of maxValue which gets called initially to utilize multi-threading
     private Position firstMaxValue(GameState s, int alpha, int beta, int count, int me){
         boolean fin = s.isFinished();
-        if (fin || count <= 0) 
+        if (fin || count <= 0) // We evaluate the game-tree branch and return if the game is over or if the cut-off has been met
             return null;
         int v = Integer.MIN_VALUE;
         Position move = null;
         var moves = s.legalMoves();
-        if (moves.isEmpty())
+        if (moves.isEmpty())    // If there are no legal moves we add Position(-1,-1) to signify that we pass the turn
             moves.add(new Position(-1, -1));
-        int[] vs = new int[moves.size()];
-        IntStream.range(0, moves.size()).parallel().forEach(i->{
+        int[] vs = new int[moves.size()]; // array for the evaluation value of each branch
+        IntStream.range(0, moves.size()).parallel().forEach(i->{ // calculate vs values in parallel
             Position a = moves.get(i);
             GameState sPrime = clone(s);
             sPrime.insertToken(a);
             vs[i] = minValue(sPrime,alpha,beta, count-1, me);
         });
+        // chose move with highest evaluation
         for(int i = 0; i < vs.length; i++){
             if (vs[i]>v){
                 v = vs[i];
