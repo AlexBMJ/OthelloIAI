@@ -165,6 +165,7 @@ public class WeightedBoardAI implements IOthelloAI{
         return -diff + getPostitionValues(s,me);
     }
 
+    // Version of maxValue which gets called initially to utilize multi-threading
     private Position firstMaxValue(GameState s, int alpha, int beta, int count, int me){
         boolean fin = s.isFinished();
         if (fin || count <= 0) 
@@ -189,45 +190,48 @@ public class WeightedBoardAI implements IOthelloAI{
         }
         return move;
     }
+
+    // maxValue aims for the game-tree branches which will gain the player the most points that it can be sure to achieve given the opponents actions
     private int maxValue(GameState s, int alpha, int beta, int count, int me){
         boolean fin = s.isFinished();
-        if (fin || count <= 0) 
+        if (fin || count <= 0)  // We evaluate the game-tree branch and return if the game is over or if the cut-off has been met
             return utility(s,me, fin);
         int v = Integer.MIN_VALUE;
         var moves = s.legalMoves();
-        if (moves.isEmpty())
+        if (moves.isEmpty())    // If there are no legal moves we add Position(-1,-1) to signify that we pass the turn
             moves.add(new Position(-1, -1));
-        for(Position a : moves){
+        for(Position a : moves){        // Loop through the legal moves
             GameState sPrime = clone(s);
             sPrime.insertToken(a);
             int v2 = minValue(sPrime,alpha,beta, count-1, me);
-            if (v2>v){
+            if (v2>v){  // Update alpha if minValue makes a move that can gain us more points
                v = v2;
                alpha = Math.max(alpha, v);
             }
-            if (v >= beta) 
+            if (v >= beta) // Cut off branch if the opponent would never allow us to take this branch
                 return v;
         }
         return v;
     }
 
+    // minValue aims for the game-tree branches which it can be sure will gain the opponent the least amount of points
     private int minValue(GameState s, int alpha, int beta, int count, int me){
         boolean fin = s.isFinished();
-        if (fin || count <= 0) 
+        if (fin || count <= 0) // We evaluate the game-tree branch and return if the game is over or if the cut-off has been met
             return utility(s,me, fin);
         int v = Integer.MAX_VALUE;
         var moves = s.legalMoves();
-        if (moves.isEmpty())
+        if (moves.isEmpty())    // If there are no legal moves we add Position(-1,-1) to signify that we pass the turn
             moves.add(new Position(-1, -1));
-        for(Position a : moves){
+        for(Position a : moves){        // Loop through the legal moves
             GameState sPrime = clone(s);
             sPrime.insertToken(a);
             int v2 = maxValue(sPrime,alpha,beta, count-1, me);
-            if (v2<v){
+            if (v2<v){  // Update beta if maxValue makes a move that allows us to lower the amount of points they will be able to get in the end
                v = v2;
                beta = Math.min(beta, v);
             }
-            if (v <= alpha) 
+            if (v <= alpha) // Cut off branch if the opponent would never allow us to take this branch
                 return v;
         }
         return v;
