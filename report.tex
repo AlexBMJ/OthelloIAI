@@ -1,0 +1,33 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage[framemethod=tikz]{mdframed}
+
+\AtBeginEnvironment{minted}{\dontdofcolorbox}
+\def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+
+\mdfdefinestyle{qbox}{
+  innerleftmargin=10,
+  innerrightmargin=10,
+  outerlinewidth=3pt,
+  topline=false,
+  rightline=false,
+  bottomline=false,
+  linecolor=black!70,
+  backgroundcolor=blue!5
+}
+
+
+
+\title{Project 1}
+
+\author{alja \and antni \and asmt}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+
+\end{document}
