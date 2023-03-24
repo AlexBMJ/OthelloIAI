@@ -8,6 +8,7 @@ public class WeightedBoardAI implements IOthelloAI{
     private int[] weights = {100, 15, 1, -7, -25, -40};
 
     public Position decideMove(GameState s){
+        // if we have one or more legal moves start Alpha Beta Minimax search to find optimal move.
         if (s.legalMoves().isEmpty())
 			return new Position(-1,-1);
         return ABSearch(clone(s));
@@ -17,6 +18,9 @@ public class WeightedBoardAI implements IOthelloAI{
     private Position ABSearch(GameState s){
         int size = s.getBoard().length;
         int me = s.getPlayerInTurn();
+        // if the current weigths are invalid recompute them. we have a set of 
+        // 0 weigths for the unocupied positions, another set for the current 
+        // player (me) and we invert that set for the opponent (3-me).
         if (pv == null || cme != me || pv[0].length != size ){
             cme = me;
             int[][] pv_plus = generatePosValue(size);
@@ -32,10 +36,12 @@ public class WeightedBoardAI implements IOthelloAI{
             pv[me] = pv_plus;
             pv[3-me] = pv_minus;
         }
-        return firstMaxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6, me);
+        //then start the recursive algorithm.
+        return firstMaxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 7, me);
     }
 
     private int[][] generatePosValue(int size){
+        // generate a set of weigths to incentivise certain positions.
         int[][] posValue = new int[size][size];
 
         posValue[0][0] = weights[0];
@@ -127,19 +133,12 @@ public class WeightedBoardAI implements IOthelloAI{
                 posValue[i][j] = weights[2];
             }
         }
-
-        // System.out.println("Position values:");
-        // for (int i = 0; i < size; i++){
-        //     for (int j = 0; j < size; j++){
-        //         System.out.printf("%03d ", posValue[i][j]);
-        //     }
-        //     System.out.println();
-        // }
         return posValue;
     }
-
+    
     private int[][][] pv = null;
     private int getPostitionValues(GameState s, int me){
+        // compute the sum of the weighted values of the pieces on the board.
         int[][] board = s.getBoard();
         int res = 0;
         int size = board.length;
@@ -151,14 +150,18 @@ public class WeightedBoardAI implements IOthelloAI{
         return res;
     }
     private int utility(GameState s, int me, boolean fin){
+        // compute a utility value for how good we evaluate a position to be.
         int[] counts = s.countTokens();
         int diff = counts[me - 1] - counts[2-me];
         int placedTileCount = counts[0]+counts[1];
+        // if the game is over check who won.
         if (fin) {
             if (diff > 0) return 1000 - placedTileCount;
             if (diff < 0) return -1000 + placedTileCount;
             return 0;
         }
+        // else return a value that incentivises controlling few but good pieces 
+        // on the board.
         return -diff + getPostitionValues(s,me);
     }
 
