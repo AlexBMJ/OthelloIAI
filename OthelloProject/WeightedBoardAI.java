@@ -5,7 +5,7 @@ public class WeightedBoardAI implements IOthelloAI{
         return new GameState(s.getBoard(), s.getPlayerInTurn());
     }
 
-    private int[] weights = {100, 15, 1, -5, -25, -40};
+    private int[] weights = {100, 15, 1, -7, -25, -40};
 
     public Position decideMove(GameState s){
         if (s.legalMoves().isEmpty())
