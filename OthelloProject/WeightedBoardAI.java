@@ -8,24 +8,31 @@ public class WeightedBoardAI implements IOthelloAI{
     private int[] weights = {100, 15, 1, -5, -25, -40};
 
     public Position decideMove(GameState s){
-        int size = s.getBoard().length;
-        pv_plus = generatePosValue(size);
-        pv_minus = new int[size][size];
-        zeroes = new int[size][size];
-        for (int i = 0; i<size; i++){
-            for (int j = 0; j<size; j++){
-                pv_minus[i][j] = -pv_plus[i][j];
-            }
-        }
-        if ( !s.legalMoves().isEmpty() )
-            return ABSearch(clone(s));
-		else
+        if (s.legalMoves().isEmpty())
 			return new Position(-1,-1);
+        return ABSearch(clone(s));
         
     }
-
+    private int cme;
     private Position ABSearch(GameState s){
-        return firstMaxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6, s.getPlayerInTurn());
+        int size = s.getBoard().length;
+        int me = s.getPlayerInTurn();
+        if (pv == null || cme != me || pv[0].length != size ){
+            cme = me;
+            int[][] pv_plus = generatePosValue(size);
+            int[][] pv_minus = new int[size][size];
+            int[][] zeroes = new int[size][size];
+            for (int i = 0; i<size; i++){
+                for (int j = 0; j<size; j++){
+                    pv_minus[i][j] = -pv_plus[i][j];
+                }
+            }
+            pv = new int[3][][];
+            pv[0] = zeroes;
+            pv[me] = pv_plus;
+            pv[3-me] = pv_minus;
+        }
+        return firstMaxValue(s, Integer.MIN_VALUE, Integer.MAX_VALUE, 6, me);
     }
 
     private int[][] generatePosValue(int size){
@@ -131,17 +138,9 @@ public class WeightedBoardAI implements IOthelloAI{
         return posValue;
     }
 
-    private int[][] pv_plus;
-    private int[][] pv_minus;
-    private int[][] zeroes;
-
+    private int[][][] pv = null;
     private int getPostitionValues(GameState s, int me){
-        int[][][] pv = new int[3][][];
-        pv[0] = zeroes;
-        pv[me] = pv_plus;
-        pv[3-me] = pv_minus;
         int[][] board = s.getBoard();
-
         int res = 0;
         int size = board.length;
         for(int i = 0; i < size; i++){
@@ -149,29 +148,18 @@ public class WeightedBoardAI implements IOthelloAI{
                 res += pv[board[i][j]][i][j];
             }
         }
-        
         return res;
-
     }
-    
-    private Integer utility(GameState s, int me, boolean fin){
+    private int utility(GameState s, int me, boolean fin){
         int[] counts = s.countTokens();
-        int util = s.getPlayerInTurn()==1? counts[0]-counts[1]:counts[1]-counts[0];
+        int diff = counts[me - 1] - counts[2-me];
         int placedTileCount = counts[0]+counts[1];
-        if (s.getPlayerInTurn() != me)
-            util = -util;
         if (fin) {
-            if (util > 0) return 1000 - placedTileCount;
-            if (util < 0) return -1000 + placedTileCount;
+            if (diff > 0) return 1000 - placedTileCount;
+            if (diff < 0) return -1000 + placedTileCount;
             return 0;
         }
-        var board = s.getBoard();
-        util = getPostitionValues(s,me);
-        if (counts[me - 1] > s.getBoard()[0].length * (s.getBoard().length / 4))
-            util -= 100;
-        if (s.getPlayerInTurn() != me)
-            util = -util;
-        return util;
+        return -diff + getPostitionValues(s,me);
     }
 
     private Position firstMaxValue(GameState s, int alpha, int beta, int count, int me){
@@ -184,7 +172,7 @@ public class WeightedBoardAI implements IOthelloAI{
         if (moves.isEmpty())
             moves.add(new Position(-1, -1));
         int[] vs = new int[moves.size()];
-        IntStream.range(0, moves.size()).forEach(i->{
+        IntStream.range(0, moves.size()).parallel().forEach(i->{
             Position a = moves.get(i);
             GameState sPrime = clone(s);
             sPrime.insertToken(a);

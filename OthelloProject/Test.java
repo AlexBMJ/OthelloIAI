@@ -15,11 +15,16 @@ public class Test{
         ArrayList<Integer> w1 = new ArrayList<>();
         ArrayList<Integer> t1 = new ArrayList<>();
         ArrayList<Integer> l1 = new ArrayList<>();
+        ArrayList<ArrayList<Long>> m = new ArrayList<>(1000);
+        for (int i = 0; i < 1000; i++){
+            m.add(new ArrayList<Long>());
+        }
+
         Arrays.asList(AIs).stream().forEach(player1 -> {
             AtomicInteger totalw = new AtomicInteger(0);
             AtomicInteger totalt = new AtomicInteger(0);
             AtomicInteger totall = new AtomicInteger(0);
-            Arrays.asList(RandAIs).parallelStream().forEach(player2 -> {
+            Arrays.asList(RandAIs).stream().forEach(player2 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
                 for (int size = 8; size <= 8; size+=2){
@@ -31,11 +36,17 @@ public class Test{
                     GameState game = new GameState(size, 1);
                     IOthelloAI player;
                     while (!game.isFinished()){
-                        if (game.getPlayerInTurn()==1)
-                            player = player1;
-                        else 
-                            player = player2;
-                        Position move = player.decideMove(game);
+                        Position move = null;
+                        if (game.getPlayerInTurn()==1){
+                            int[] counts = game.countTokens();
+                            long startTime = System.nanoTime();
+                            move = player1.decideMove(game);
+                            long endTime = System.nanoTime();
+                            m.get(counts[0]+counts[1]).add(endTime-startTime);
+                        }
+                        else { 
+                            move = player2.decideMove(game);
+                        }
                         if (move.col == -1 && move.row == -1)
                             game.changePlayer();
                         else 
@@ -77,7 +88,7 @@ public class Test{
             AtomicInteger totalw = new AtomicInteger(0);
             AtomicInteger totalt = new AtomicInteger(0);
             AtomicInteger totall = new AtomicInteger(0);
-            Arrays.asList(RandAIs).parallelStream().forEach(player1 -> {
+            Arrays.asList(RandAIs).stream().forEach(player1 -> {
                 if (debug)
                     System.out.println("player1: " + player1.getClass().getSimpleName() + " vs player2: " + player2.getClass().getSimpleName());
                 for (int size = 8; size <= 8; size+=2){
@@ -89,11 +100,17 @@ public class Test{
                     GameState game = new GameState(size, 1);
                     IOthelloAI player;
                     while (!game.isFinished()){
-                        if (game.getPlayerInTurn()==1)
-                            player = player1;
-                        else 
-                            player = player2;
-                        Position move = player.decideMove(game);
+                        Position move = null;
+                        if (game.getPlayerInTurn()==2){
+                            int[] counts = game.countTokens();
+                            long startTime = System.nanoTime();
+                            move = player2.decideMove(game);
+                            long endTime = System.nanoTime();
+                            m.get(counts[0]+counts[1]).add(endTime-startTime);
+                        }
+                        else { 
+                            move = player1.decideMove(game);
+                        }
                         if (move.col == -1 && move.row == -1)
                             game.changePlayer();
                         else 
@@ -137,5 +154,21 @@ public class Test{
         for(int i = 0; i<AIs.length; i++){
             System.out.println("\t"+AIs[i].getClass().getSimpleName() + " \n\tw%: "+ (w2.get(i)/(float)t*100) + " t%: "+ (t2.get(i)/(float)t*100) + " l%: "+ (l2.get(i)/(float)t*100));
         }
+        long max = 0;
+        System.out.println("average move time:");
+        for(int i = 1; i<m.size();i++){
+            if (m.get(i).size() == 0)
+                continue;
+            long ms = 0;
+            for(long x : m.get(i)){
+                ms+=x;
+                if (x>max)
+                    max = x;
+            }
+            ms /= m.get(i).size();
+            ms /= 1000000;
+            System.out.println(i+": "+ms+"ms");
+        }
+        System.out.println("max: "+max/1000000+"ms");
     }
 }
